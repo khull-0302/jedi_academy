@@ -1,0 +1,61 @@
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
+import marshmallow as ma
+
+from db import db
+from models.padawan_courses_xref import padawans_courses_association_table
+
+
+class Users(db.Model):
+    __tablename__ = "Users"
+
+    user_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    temple_id = db.Column(UUID(as_uuid=True), db.ForeignKey("Temples.temple_id"), nullable=False)
+    user_name = db.Column(db.String(), nullable=False, unique=True)
+    email = db.Column(db.String(), nullable=False, unique=True)
+    password = db.Column(db.String(), nullable=False)
+    force_rank = db.Column(db.String())
+    midi_count = db.Column(db.Integer())
+    is_active = db.Column(db.Boolean(), default=True)
+
+    
+    auth = db.relationship("AuthTokens", back_populates="user", cascade="all, delete-orphan")
+    temple = db.relationship("Temples", back_populates="users")
+    padawan = db.relationship("Padawans", back_populates="user")
+    master = db.relationship("Masters", back_populates='user',
+    cascade="all, delete-orphan")
+    lightsaber = db.relationship("Lightsabers", back_populates="owner", cascade="all, delete-orphan", uselist=False)
+
+    def __init__(self, user_name, email, password, temple_id, force_rank=None, midi_count=None, is_active=True):
+        self.user_name = user_name
+        self.email = email
+        self.password = password
+        self.temple_id = temple_id
+        self.force_rank = force_rank
+        self.midi_count = midi_count
+        self.is_active = is_active
+
+    def new_user_obj():
+        return Users("", "", "", "", None, None, True)
+
+     
+class UsersSchema(ma.Schema):
+    class Meta:
+        fields = ['user_id', 'user_name', 'email', 'force_rank', 'midi_count', 'is_active', 'temple', 'lightsaber', 'padawan', 'master']
+
+    user_id = ma.fields.UUID()
+    user_name = ma.fields.String(required=True)
+    email = ma.fields.String(required=True)
+    force_rank = ma.fields.String(allow_none=True)
+    midi_count = ma.fields.Integer(allow_none=True)
+    is_active = ma.fields.Boolean(dump_default=True)
+
+    temple = ma.fields.Nested("TemplesSchema", exclude=['users'])
+    lightsaber = ma.fields.Nested("LightsabersSchema", exclude=['owner'] )
+    padawan = ma.fields.Nested("PadawansSchema", exclude=['user'])
+    master = ma.fields.Nested("MastersSchema", exclude=['user'])
+
+
+
+user_schema = UsersSchema()
+users_schema = UsersSchema(many=True)
