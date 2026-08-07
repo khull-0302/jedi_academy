@@ -36,8 +36,8 @@ class CoursesSchema(ma.Schema):
     difficulty = ma.fields.String(allow_none=True)
     duration_weeks = ma.fields.Integer(allow_none=True)
 
-    instructor = ma.fields.Nested("MastersSchema", exclude=['courses'])
-    padawans = ma.fields.Nested("PadawansSchema", many=True, exclude=['courses'])
+    instructor = ma.fields.Nested("MastersSchema", exclude=['courses', 'padawans', 'user', 'species'])
+    padawans = ma.fields.Nested("PadawansSchema", many=True, exclude=['courses', 'user', 'master', 'species'])
 
 
 course_schema = CoursesSchema()

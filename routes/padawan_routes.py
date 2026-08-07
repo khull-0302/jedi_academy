@@ -15,6 +15,10 @@ def get_all_padawans():
 def get_all_active_padawans():
     return controllers.get_all_active_padawans()
 
+@padawan.route("/enrollment", methods=["POST"])
+def add_padawan_course_association():
+    return controllers.add_padawan_course_association()
+
 @padawan.route("/padawan/<padawan_id>", methods=["PUT"])
 def update_padawan_training(padawan_id):
     return controllers.update_padawan_training(padawan_id)

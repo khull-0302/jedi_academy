@@ -39,8 +39,8 @@ class SpeciesSchema(ma.Schema):
     avg_lifespan = ma.fields.Integer(allow_none=True)
    
 
-    masters = ma.fields.Nested("MastersSchema", many=True, exclude=['species'])
-    padawans = ma.fields.Nested("PadawansSchema", many=True, exclude=['species'])
+    masters = ma.fields.Nested("MastersSchema", many=True, exclude=['species', 'padawans', 'user', 'courses'])
+    padawans = ma.fields.Nested("PadawansSchema", many=True, exclude=['species', 'master', 'user','courses'])
 
 
 species_schema = SpeciesSchema()

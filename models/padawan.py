@@ -47,10 +47,10 @@ class PadawansSchema(ma.Schema):
     training_level = ma.fields.Integer(allow_none=True)
     graduation_date = ma.fields.DateTime(allow_none=True)
 
-    master = ma.fields.Nested("MastersSchema", exclude=['padawans'])
-    user = ma.fields.Nested("UsersSchema", exclude=['padawan'])
-    species = ma.fields.Nested("SpeciesSchema", exclude=['padawans'])
-    courses = ma.fields.Nested("CoursesSchema", many=True, exclude=['padawans'])
+    master = ma.fields.Nested("MastersSchema", exclude=['padawans', 'user', 'courses', 'species'])
+    user = ma.fields.Nested("UsersSchema", exclude=['padawan', 'master', 'temple', 'lightsaber'])
+    species = ma.fields.Nested("SpeciesSchema", exclude=['padawans', 'masters'])
+    courses = ma.fields.Nested("CoursesSchema", many=True, exclude=['padawans', 'instructor'])
 
 
 padawan_schema = PadawansSchema()

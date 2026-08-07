@@ -38,7 +38,7 @@ class TemplesSchema(ma.Schema):
     padawan_limit = ma.fields.Integer(allow_none=True)
     is_active = ma.fields.Boolean(dump_default=True)
 
-    users = ma.fields.Nested('UsersSchema', many=True, exclude=['temple'])
+    users = ma.fields.Nested('UsersSchema', many=True, exclude=['temple', 'padawan', 'master', 'lightsaber'])
     
 temple_schema = TemplesSchema()
 temples_schema = TemplesSchema(many=True)

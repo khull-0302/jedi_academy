@@ -21,7 +21,7 @@ class Users(db.Model):
     
     auth = db.relationship("AuthTokens", back_populates="user", cascade="all, delete-orphan")
     temple = db.relationship("Temples", back_populates="users")
-    padawan = db.relationship("Padawans", back_populates="user")
+    padawan = db.relationship("Padawans", back_populates="user", cascade="all, delete-orphan")
     master = db.relationship("Masters", back_populates='user',
     cascade="all, delete-orphan")
     lightsaber = db.relationship("Lightsabers", back_populates="owner", cascade="all, delete-orphan", uselist=False)
@@ -51,9 +51,9 @@ class UsersSchema(ma.Schema):
     is_active = ma.fields.Boolean(dump_default=True)
 
     temple = ma.fields.Nested("TemplesSchema", exclude=['users'])
-    lightsaber = ma.fields.Nested("LightsabersSchema", exclude=['owner'] )
-    padawan = ma.fields.Nested("PadawansSchema", exclude=['user'])
-    master = ma.fields.Nested("MastersSchema", exclude=['user'])
+    lightsaber = ma.fields.Nested("LightsabersSchema", exclude=['owner'])
+    padawan = ma.fields.Nested("PadawansSchema", exclude=['user', 'master', 'courses', 'species'])
+    master = ma.fields.Nested("MastersSchema", exclude=['user', 'padawans', 'courses', 'species'])
 
 
 

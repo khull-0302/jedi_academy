@@ -32,7 +32,7 @@ class LightsabersSchema(ma.Schema):
     saber_name = ma.fields.String(required=True)
     blade_color = ma.fields.String(required=True)
 
-    owner = ma.fields.Nested("UsersSchema", exclude=['lightsaber'])
+    owner = ma.fields.Nested("UsersSchema", exclude=['lightsaber', 'padawan', 'master', 'temple'])
 
 
 lightsaber_schema = LightsabersSchema()

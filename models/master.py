@@ -18,7 +18,7 @@ class Masters(db.Model):
 
     user = db.relationship("Users", back_populates="master")
     species = db.relationship("Species", back_populates="masters")
-    courses = db.relationship("Courses", back_populates="instructor")
+    courses = db.relationship("Courses", back_populates="instructor", cascade="all, delete-orphan")
     padawans = db.relationship("Padawans", back_populates="master")
 
     def __init__(self, user_id, species_id, master_name, specialization=None, years_training=None, max_padawans=None):
@@ -43,10 +43,10 @@ class MastersSchema(ma.Schema):
     years_training = ma.fields.Integer(allow_none=True)
     max_padawans = ma.fields.Integer(allow_none=True)
 
-    user = ma.fields.Nested("UsersSchema", exclude=['master'])
-    species = ma.fields.Nested("SpeciesSchema", exclude=['masters'])
-    courses = ma.fields.Nested("CoursesSchema", many=True, exclude=['instructor'])
-    padawans = ma.fields.Nested("PadawansSchema", many=True, exclude=['master'])
+    user = ma.fields.Nested("UsersSchema", exclude=['master', 'padawan'])
+    species = ma.fields.Nested("SpeciesSchema", exclude=['masters', 'padawans'])
+    courses = ma.fields.Nested("CoursesSchema", many=True, exclude=['instructor', 'padawans'])
+    padawans = ma.fields.Nested("PadawansSchema", many=True, exclude=['master', 'user', 'courses', 'species'])
 
 
 master_schema = MastersSchema()

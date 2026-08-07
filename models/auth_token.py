@@ -27,7 +27,7 @@ class AuthTokensSchema(ma.Schema):
     expiration = ma.fields.DateTime(required=True)
 
     user = ma.fields.Nested(
-        "UsersSchema"
+        "UsersSchema", exclude=['padawan', 'master', 'lightsaber', 'temple']
     )
 
 
