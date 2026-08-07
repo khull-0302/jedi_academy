@@ -7,6 +7,10 @@ course = Blueprint('course', __name__)
 def add_course():
     return controllers.add_course()
 
+@course.route("/courses/<difficulty>", methods=["GET"])
+def get_courses_by_difficulty(difficulty):
+    return controllers.get_courses_by_difficulty(difficulty)
+
 @course.route("/course/<course_id>", methods=["PUT"])
 def update_course(course_id):
     return controllers.update_course(course_id)

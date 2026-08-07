@@ -26,6 +26,19 @@ def add_course(auth_info):
 
     return jsonify({"message": "course created", "result": course_schema.dump(new_course)}), 201
 
+
+def get_courses_by_difficulty(difficulty):
+    course_query = (
+        db.session.query(Courses)
+        .filter(Courses.difficulty == difficulty)
+        .all()
+    )
+
+    return jsonify({
+        "message": "courses found",
+        "results": courses_schema.dump(course_query)
+    }), 200
+
 @authenticate_return_auth
 def update_course(course_id, auth_info):
     post_data = request.form if request.form else request.json

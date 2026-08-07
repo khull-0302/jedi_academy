@@ -31,3 +31,7 @@ def promote_padawan(padawan_id):
 @padawan.route("/padawan/<padawan_id>", methods=["DELETE"])
 def delete_padawan_by_id(padawan_id):
     return controllers.delete_padawan_by_id(padawan_id)
+
+@padawan.route("/enrollment/<padawan_id>/<course_id>", methods=["DELETE"])
+def remove_padawan_from_course(padawan_id, course_id):
+    return controllers.remove_padawan_course_association(padawan_id, course_id)

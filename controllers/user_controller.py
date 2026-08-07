@@ -33,6 +33,20 @@ def get_all_users(auth_info):
     users_query = db.session.query(Users).all()
     return jsonify({"message": "users found", "results": users_schema.dump(users_query)}), 200
 
+@authenticate_return_auth
+def get_user_profile(auth_info):
+    user = db.session.query(Users).filter(
+        Users.user_id == auth_info.user.user_id
+    ).first()
+
+    if not user:
+        return jsonify({"message": "user not found"}), 404
+
+    return jsonify({
+        "message": "profile found",
+        "result": user_schema.dump(user)
+    }), 200
+
 
 @authenticate_return_auth
 def update_user_profile(user_id, auth_info):

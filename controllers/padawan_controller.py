@@ -136,3 +136,24 @@ def delete_padawan_by_id(padawan_id, auth_info):
     return jsonify({
         "message": "padawan deleted"
     }), 200
+
+@authenticate_return_auth
+def remove_padawan_course_association(padawan_id, course_id, auth_info):
+    if auth_info.user.force_rank not in ['Master', 'Grand Master', 'Council Member']:
+        return jsonify({"message": "unauthorized"}), 401
+
+    padawan_query = db.session.query(Padawans).filter(Padawans.padawan_id == padawan_id).first()
+    course_query = db.session.query(Courses).filter(Courses.course_id == course_id).first()
+
+    if not padawan_query or not course_query:
+        return jsonify({
+            "message": "padawan or course record does not exist"
+        }), 400
+
+    padawan_query.courses.remove(course_query)
+    db.session.commit()
+
+    return jsonify({
+        "message": "course removed from padawan",
+        "result": padawan_schema.dump(padawan_query)
+    })

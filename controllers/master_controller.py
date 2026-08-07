@@ -3,6 +3,9 @@ from flask import jsonify, request
 
 from db import db
 from models.master import Masters, master_schema, masters_schema
+from models.padawan import Padawans, padawan_schema, padawans_schema
+from models.courses import Courses, course_schema, courses_schema
+
 from util.reflection import populate_object
 from lib.authenticate import authenticate_return_auth
 
@@ -39,7 +42,7 @@ def get_all_masters(auth_info):
 
 @authenticate_return_auth
 def update_master_profile(master_id, auth_info):
-    if auth_info.master.force_rank not in ['Council Member', 'Grand Master'] and auth_info.master.master_id != master_id:
+    if auth_info.user.force_rank not in ['Council Member', 'Grand Master'] and auth_info.master.master_id != master_id:
         return jsonify({"message": "unauthorized"}), 401
     
     post_data = request.form if request.form else request.json
@@ -59,6 +62,31 @@ def update_master_profile(master_id, auth_info):
     
     return jsonify({"message": "unable to update record"}), 400
 
+@authenticate_return_auth
+def remove_master_status(master_id, auth_info):
+    if auth_info.user.force_rank != 'Grand Master':
+        return jsonify({"message": "unauthorized"}), 401
+
+    post_data = request.form if request.form else request.json
+    new_master_id = post_data.get("new_master_id")
+
+    master_query = db.session.query(Masters).filter(
+        Masters.master_id == master_id
+    ).first()
+
+    if not master_query:
+        return jsonify({"message": "master not found"}), 404
+
+    for padawan in master_query.padawans:
+        padawan.master_id = new_master_id
+
+    db.session.delete(master_query)
+    db.session.commit()
+
+    return jsonify({
+        "message": "master status removed"
+    }), 200
+
 
 
 @authenticate_return_auth
@@ -76,4 +104,21 @@ def delete_master_by_id(master_id, auth_info):
 
     return jsonify({
         "message": "master removed"
+    }), 200
+
+
+@authenticate_return_auth
+def order_66(auth_info):
+    if auth_info.user.force_rank != 'Grand Master':
+        return jsonify({"message": "unauthorized"}), 401
+
+    db.session.query(Padawans).delete()
+    db.session.query(Masters).delete()
+    db.session.query(Courses).delete()
+
+
+    db.session.commit()
+
+    return jsonify({
+        "message": "order 66 executed"
     }), 200

@@ -11,6 +11,10 @@ def add_user():
 def get_all_users():
     return controllers.get_all_users()
 
+@user.route("/user/profile", methods=["GET"])
+def get_user_profile():
+    return controllers.get_user_profile()
+
 @user.route("/user/<user_id>", methods=["PUT"])
 def update_user_profile(user_id):
     return controllers.update_user_profile(user_id)
